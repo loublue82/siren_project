@@ -1,0 +1,68 @@
+[[siren-federate-connector-virtual-indices-api]]
+=== Virtual index API
+
+In this section we present the API available to interact with the virtual indices.
+
+==== Virtual index management
+
+===== Virtual index creation and modification
+
+A virtual index with a specific `id` can be updated by issuing a `PUT` request as follows:
+
+[source,json]
+----
+PUT /_siren/connector/index/<id>
+{
+  "datasource": "ds",
+  "catalog": "catalog",
+  "schema": "schema",
+  "resource": "table",
+  "key": "id"
+}
+----
+
+The id of a virtual index must be a valid lowercase Elasticsearch index name;
+it is recommended to start virtual indices with a common prefix to simplify handling of permissions.
+
+Body parameters:
+
+- `datasource`: the id of an existing datasource.
+- `resource`: the name of a table or view on the remote datasource.
+- `key`: the name of a unique column; if a virtual index has no primary
+  key it will be possible to perform aggregations, however queries that
+  expect a reproducible unique identifier will not be possible.
+- `catalog` and `schema`: the catalog and schema containing the table specified
+  in the `resource` parameter; these are usually required only if the connection does not specify a
+  default catalog or schema.
+
+****
+**Permissions:** to create a virtual index, the _indices-level_ action `indices:admin/federate/connector/put` should be granted by the security system, e.g., {sg}.
+****
+
+===== Virtual index deletion
+
+To delete a virtual index, issue a `DELETE` request as follows:
+
+[source,json]
+----
+DELETE /_siren/connector/index/<id>
+----
+
+When a virtual index is deleted, the corresponding concrete index is not deleted automatically.
+
+****
+**Permissions:** to delete a virtual index, the _indices-level_ action `indices:admin/federate/connector/delete` should be granted by the security system, e.g., {sg}.
+****
+
+===== Virtual index listing
+
+To list the virtual indices configured in the system, issue a `GET` request as follows:
+
+[source,json]
+----
+GET /_siren/connector/index/_search
+----
+
+****
+**Permissions:** to list virtual indices, the _indices-level_ action `indices:admin/federate/connector/search` should be granted by the security system, e.g., {sg}.
+****

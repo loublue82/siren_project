@@ -1,0 +1,16 @@
+[[siren-federate-connector-apis]]
+== Connector APIs
+
+In this section we present the APIs available to interact with datasources, virtual indices, ingestion jobs.
+
+****
+**Permissions:** the APIs listed in this section need to have the _cluster-level_ wildcard action `cluster:internal/federate/*` granted by the security system, e.g., {sg}.
+****
+
+include::connector-datasource-api.asciidoc[]
+
+include::connector-virtual-indices-api.asciidoc[]
+
+include::connector-ingestion-api.asciidoc[]
+
+include::connector-job-api.asciidoc[]

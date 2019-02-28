@@ -1,0 +1,90 @@
+[[siren-federate-processors]]
+== Processors
+
+Federate acts as an Elasticsearch Ingest plugin coming with a set of additional processors
+that can be used to enrich documents at indexing time.
+
+Here is the list of available processors.
+
+=== JSON Web Service Processor
+
+Call an external JSON WebService and copy the returned JSON structure to the record.
+
+|===
+|Name |Required |Default | Description
+
+|method
+|no
+|get
+|The HTTP method: get, post, put
+
+|url
+|yes
+|-
+|The URL endpoint of the web service.
+
+|requests_per_second
+|no
+|0
+|The expected maximum number of requests per second.
+
+|resource_name
+|yes
+|-
+|Apply a name to the web service resource.
+Every processor instance with the same resource name are consolidated
+and submitted to the _requests_per_second_ limit.
+
+|input_map
+|yes
+|-
+|A map with a JSON Path expression as the key and a field name as the value.
+It builds the JSON structure that will be submitted to the external web service.
+
+|input_default
+|no
+|-
+|A map with a field as the key and a default value.
+For a given field, this map provides a default value if the JSON Path expression
+of the input_map does not return any value.
+
+|output_map
+|yes
+|-
+|A map with a field name as the key and a JSON Path expression as the value.
+The JSON Path expressions are applied to the JSON structure returned by the external web service.
+The indexed document is filled with results of the JSON Path expressions associated to the given field name.
+Already existing content for the field name is replaced.
+
+|output_default
+|no
+|-
+|A map with a field as the key and a default value.
+For a given field, this map provides a default value if the JSON Path expression
+of the output_map does not return any value.
+
+|error_output_field
+|no
+|-
+|If this field is not blank and an error occurs while calling the external external
+the field is filled with a the error message and the ingestion process is not stopped.
+If the field is empty, an exception is thrown.
+
+|time_out
+|no
+|300
+|This timeout determines how many seconds should the request wait for a response
+before failing the request.
+
+|username
+|no
+|-
+|If a _username_ is provided the HTTP(S) connection to the external web service
+will use it as the username for an HTTP basic authentication.
+
+|password
+|no
+|-
+|If a _password_ is provided the HTTP(S) connection to the external web service
+ will use it as the password for an HTTP basic authentication.
+|===
