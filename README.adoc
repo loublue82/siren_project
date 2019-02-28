@@ -1,0 +1,11 @@
+---
+
+copyright:
+  years: 2019
+lastupdated: "28-02-2019"
+
+---
+
+# Siren Federate user guide
+
+Welcome to Siren Federate documentation, where you can find information about how to get up and running with the Siren Federate product.

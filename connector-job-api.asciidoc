@@ -1,0 +1,209 @@
+[[siren-federate-connector-job-api]]
+=== Job API
+
+The job API provides methods for managing running job and retrieve status about previous executions.
+
+==== Job management
+
+The endpoint for job management is at `/_siren/connector/jobs`.
+
+===== Running jobs statuses
+
+The status of all running jobs can be retrieved by issuing a `GET` request as follows:
+
+[source,json]
+----
+GET _siren/connector/jobs/<type>
+----
+
+The possible type value is:
+
+- ingestion: This type is related to the ingestion jobs.
+
+===== Running job status
+
+The status of a job can be retrieved by issuing a `GET` request as follows:
+
+[source,json]
+----
+GET _siren/connector/jobs/<type>/<id>
+----
+
+This API provide the status of the current running job if there is any,
+or the status of the last execution.
+
+Body parameters:
+
+- `status`: the status of the job.
+
+Status parameters:
+
+- `id`: the id of the job.
+- `is_running`: a boolean value indicating if the job is running.
+- `is_aborting`: an optional boolean value which indicates that the job is aborting.
+- `start_time`: a timestamp with the starting time of the job.
+- `end_time`: a timestamp with the ending time of the job.
+- `infos`: textual information.
+- `error`: an optional sequence of error messages.
+- `state`: the current state of the job.
+- `count`: the total number of processed records.
+- `last_id`: the optional last known value of the primary key column.
+
+Possible state values:
+
+- `running`: the job is running.
+- `aborting`: the job is aborting due to the user request.
+- `aborted`: the job has been aborted.
+- `error`: the job failed with an error.
+- `successful`: the job was completed successfully.
+
+JSON representation while a job is running:
+
+[source,json]
+----
+{
+  "_id": "postgres-events",
+  "type": "ingestion",
+  "found": true,
+  "status": {
+    "version": 1,
+    "id": "postgres-events",
+    "is_running": true,
+    "start_time": 1538731228589,
+    "infos": "The job is running.",
+    "state": "running",
+    "count": 3459,
+    "last_id": "2289"
+  }
+}
+----
+
+JSON representation of a successfully completed job:
+
+[source,json]
+----
+{
+  "_id": "postgres-events",
+  "type": "ingestion",
+  "found": true,
+  "status": {
+    "version": 1,
+    "id": "postgres-events",
+    "is_running": false,
+    "start_time": 1538733893554,
+    "end_time": 1538733911829,
+    "infos": "The job is done.",
+    "state": "successful",
+    "count": 10000,
+    "last_id": "12219"
+  }
+}
+----
+
+JSON representation of a job who failed due to an error:
+
+[source,json]
+----
+{
+  "_id": "postgres-events",
+  "type": "ingestion",
+  "found": true,
+  "status": {
+    "version": 1,
+    "id": "postgres-events",
+    "is_running": false,
+    "start_time": 1538730949766,
+    "end_time": 1538730961293,
+    "infos": "The job has failed.",
+    "error": [
+      "Could not execute datasource query [postgres].",
+      "Failed to initialize pool: The connection attempt failed.",
+      "The connection attempt failed.",
+      "connect timed out"
+    ],
+    "state": "error",
+    "count": 0
+  }
+}
+----
+
+===== Cancelling a running job
+
+This API provides a method to stop a running job.
+
+[source,json]
+----
+POST _siren/connector/jobs/ingestion/<id>/_abort
+----
+
+[source,json]
+----
+{
+  "_id": "postgres-events",
+  "type": "ingestion",
+  "found": true,
+  "status": {
+    "version": 1,
+    "id": "postgres-events",
+    "is_running": false,
+    "is_aborting": true,
+    "start_time": 1538733800993,
+    "end_time": 1538733805318,
+    "infos": "The job has been aborted.",
+    "state": "aborted",
+    "count": 2220,
+    "last_id": "2219"
+  }
+}
+----
+
+===== Searching on the job log
+
+This API provides a method to retrieve the status of completed jobs.
+It is possible to pass parameters to filter the results.
+
+[source,json]
+----
+GET _siren/connector/jobs/_search
+----
+
+Possible filter parameters:
+
+- `start_time_from`: jobs which start time is greater than or equal to the passed value.
+- `start_time_to`: jobs which start time is lower than or equal to the passed value.
+- `type`: a filter on the job type.
+- `state`: the state of the job status. See the job status description to get a list of possible values.
+- `id`: the id of the job.
+
+Request and result example:
+
+[source,json]
+----
+GET _siren/connector/jobs/_search?type=ingestion&id=postgresevents&start_time_to=1539192173232
+----
+
+[source,json]
+----
+{
+  "hits": {
+    "total": 1,
+    "hits": [
+      {
+        "_id": "postgresevents11e247fa-ccb1-11e8-ad75-c293294ec513",
+        "_source": {
+          "ingestion": {
+            "version": 1,
+            "id": "postgresevents",
+            "is_running": false,
+            "start_time": 1539192150699,
+            "end_time": 1539192151612,
+            "infos": "The job is done.",
+            "state": "successful",
+            "count": 0
+          }
+        }
+      }
+    ]
+  }
+}
+----

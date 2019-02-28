@@ -1,0 +1,33 @@
+# Siren Federate user guide
+## Table of Contents
+
+= Summary
+
+link:README.adoc[Introduction]
+. link:introduction.asciidoc[Introduction]
+. link:architecture.asciidoc[Architecture]
+. link:getting-started.asciidoc[Getting started]
+. link:set-up-federate.asciidoc[Set up Federate]
+. link:modules.asciidoc[Federate modules]
+. link:search-apis.asciidoc[Search APIs]
+. link:xxx.asciidoc[xxx]
+. link:xxx.asciidoc[xxx]
+
+
+
+
+include::query-dsl.asciidoc[]
+
+include::cluster-apis.asciidoc[]
+
+include::jdbc.asciidoc[]
+
+include::connector-apis.asciidoc[]
+
+include::sessions-apis.asciidoc[]
+
+include::license-apis.asciidoc[]
+
+include::set-up-security.asciidoc[]
+
+include::performance.asciidoc[]
